@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Kết quả tính toán then</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f9;
+      padding: 20px;
+    }
+    .box {
+      max-width: 1100px;
+      margin: 20px auto;
+      background: #fff;
+      padding: 20px;
+      border: 1px solid #ccc;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }    
+    .container {
+      max-width: 1100px;
+      margin: auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    h2 {
+      text-align: center;
+      background: #1de9b6;
+      padding: 10px;
+      border-radius: 8px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 20px;
+      margin-top: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+    table, th, td {
+      border: 1px solid #ccc;
+    }
+    th {
+      background: #1de9b6;
+      padding: 8px;
+      text-align: center;
+    }
+    td {
+      padding: 8px;
+      text-align: center;
+      background: #f9f9f9;
+    }
+    .charts {
+      margin-top: 30px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    canvas {
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 10px;
+    }
+    .chart-wrapper {
+      max-width: 1100px;        /* container bằng các box khác */
+      display: flex;             /* flex container */
+      gap: 20px;                 /* khoảng cách 2 chart */
+      margin: auto ;            /* căn trái */
+      margin-top: 20px;
+      justify-content: space-between; /* chia đều 2 chart */
+      box-sizing: border-box;
+      padding: 0 10px;   
+    }
+
+    .chart-box {
+      flex: 1;                   /* chia đều 2 chart */
+      background: #fff;
+      padding: 16px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+      box-sizing: border-box;
+    }
+
+    .chart-box h4 {
+      text-align: center;
+      margin-bottom: 6px;
+      font-size: 16px;           /* chữ nhỏ vừa với chart */
+    }
+
+    .chart-box table {
+      width: 100%;
+      margin-top: 10px;
+      border-collapse: collapse;
+      text-align: center;
+      font-size: 12px;           /* chữ nhỏ để vừa table */
+      table-layout: fixed;        /* cố định độ rộng cột */
+      word-wrap: break-word;      /* xuống dòng nếu quá dài */
+    }
+
+    .chart-box table th, .chart-box table td {
+      padding: 4px;              /* giảm padding để vừa table */
+    }
+
+  </style>
+</head>
+<body>
+<!-- Nút quay về -->
+  <div style="position:fixed; top:10px; right:10px;">
+    <form action="{{ url_for('index') }}" method="get">
+      <button type="submit" 
+        style="padding:8px 15px; background:#1de9b6; color:#000; 
+              border:none; border-radius:6px; font-weight:bold; cursor:pointer;">
+        ⬅ Quay về
+      </button>
+    </form>
+  </div>
+
+
+  <div class="container">
+    <h2>Thông số đã nhập</h2>
+<table border="1" cellpadding="8" cellspacing="0">
+  <tr>
+    <th>Đường kính d (mm)</th>
+    <td>{{ result.d }}</td>
+  </tr>
+  <tr>
+    <th>Chiều dài trục l (mm)</th>
+    <td>{{ result.l }}</td>
+  </tr>
+  <tr>
+    <th>Công suất P (kW)</th>
+    <td>{{ result.p }}</td>
+  </tr>
+  <tr>
+    <th>Tốc độ n (vòng/phút)</th>
+    <td>{{ result.n }}</td>
+  </tr>
+  <tr>
+    <th>Hiệu suất η</th>
+    <td>{{ result.eta }}</td>
+  </tr>
+  <tr>
+    <th>Số then</th>
+    <td>{{ result.z }}</td>
+  </tr>
+  <tr>
+    <th>Vật liệu then 1</th>
+    <td>{{ result.mat1 }}</td>
+  </tr>
+  <tr>
+    <th>Vật liệu then 2</th>
+    <td>{{ result.mat2 }}</td>
+  </tr>
+</table>
+
+    <h2>Kết quả tính toán then</h2>
+
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:20px;">
+      
+      <!-- Bảng bên trái -->
+      <table border="1" cellpadding="5" style="width:50%; border-collapse:collapse;">
+        <tr>
+          <th colspan="5">Thông số then</th>
+        </tr>
+        <tr>
+          <th>d</th><th>b</th><th>h</th><th>t1</th><th>t2</th>
+        </tr>
+        <tr>
+          <td>{{ result.d }}</td>
+          <td>{{ result.b }}</td>
+          <td>{{ result.h }}</td>
+          <td>{{ result.t1 }}</td>
+          <td>{{ result.t2 }}</td>
+        </tr>
+      </table>
+
+      <!-- Ảnh bên phải -->
+      <div style="width:50%; text-align:center;">
+        <img src="{{ url_for('static', filename='images/anh_then.jpg') }}" alt="Ảnh then" style="max-width:100%; border:1px solid #1de9b6; border-radius:8px;">
+        <p><i>Hình minh họa then</i></p>
+      </div>
+  </div>
+    <h2>Kết quả tính toán ứng suất trên then</h2>
+      <!-- Bảng kết quả ứng suất -->
+      <table border="1" cellpadding="5" style="width:100%; border-collapse:collapse;">
+        <tr>
+          <th colspan="5">Kết quả tính toán ứng suất</th>
+        </tr>
+        <tr>
+          <th>Vật liệu</th><th>Ứng suất dập then</th><th>Ứng suất cắt then</th><th>Hệ số an toàn dập</th><th>Hệ số an toàn cắt</th>
+        </tr>
+        <!--hàng 1-->
+        <tr>
+          <td>{{ result.mat1 }}</td>
+          <td>{{ result.sigma_dap | round(2) }}</td>
+          <td>{{ result.tau | round(2) }}</td>
+          <td>{{ result.sf11 | round(2) }}</td>
+          <td>{{ result.sf12 | round(2)}}</td>
+        </tr>
+        <!--hàng 2-->
+        <tr>
+          <td>{{ result.mat2 }}</td>
+          <td>{{ result.sigma_dap | round(2) }}</td>
+          <td>{{ result.tau | round(2)}}</td>
+          <td>{{ result.sf21 | round(2)}}</td>
+          <td>{{ result.sf22 | round(2)}}</td>
+        </tr>        
+      </table>
+
+</div>
+
+<!-- Đoạn văn đánh giá -->
+<div class="box">
+  <h3>Đánh giá thiết kế then</h3>
+  <p>{{ result.danh_gia1 }}</p>
+  <p>{{ result.danh_gia2 }}</p>
+</div>
+
+
+
+<!--Vẽ biểu đồ-->
+<!-- Khối chứa 2 chart cạnh nhau -->
+
+<div class="chart-wrapper">
+  <!-- Chart 1 -->
+  <div class="chart-box">
+    <h4>Sự thay đổi Sf theo đường kính</h4>
+    <div id="chart_mat1" style="width:100%; height:360px;"></div>
+
+    <table border="1">
+      <thead>
+        <tr>
+          <th>d</th>
+          {% for dv in d_values %}<th>{{ dv }}</th>{% endfor %}
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>sf11</td>{% for v in sf11_values %}<td>{{ v if v is not none else '-' }}</td>{% endfor %}</tr>
+        <tr><td>sf12</td>{% for v in sf12_values %}<td>{{ v if v is not none else '-' }}</td>{% endfor %}</tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Chart 2 -->
+  <div class="chart-box">
+    <h4>Sự thay đổi Sf theo đường kính</h4>
+    <div id="chart_mat2" style="width:100%; height:360px;"></div>
+
+    <table border="1">
+      <thead>
+        <tr>
+          <th>d</th>
+          {% for dv in d_values %}<th>{{ dv }}</th>{% endfor %}
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>sf21</td>{% for v in sf21_values %}<td>{{ v if v is not none else '-' }}</td>{% endfor %}</tr>
+        <tr><td>sf22</td>{% for v in sf22_values %}<td>{{ v if v is not none else '-' }}</td>{% endfor %}</tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+<!-- Plotly -->
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script>
+  // chuyển dữ liệu từ Flask bằng tojson
+  const d_values = {{ d_values|tojson }};
+  const sf11 = {{ sf11_values|tojson }};
+  const sf12 = {{ sf12_values|tojson }};
+  const sf21 = {{ sf21_values|tojson }};
+  const sf22 = {{ sf22_values|tojson }};
+  const mat1 = "{{ mat1 }}";
+  const mat2 = "{{ mat2 }}";
+
+  // trace cho vật liệu 1
+  const t11 = { x: d_values, y: sf11, mode: 'lines+markers', name: `sf11 (Ưs dập) `, line:{color:'orange'}, marker:{size:6} };
+  const t12 = { x: d_values, y: sf12, mode: 'lines+markers', name: `sf12 (Ưs cắt) `, line:{color:'blue'}, marker:{size:6} };
+  const ref15 = { x: d_values, y: d_values.map(()=>1.5), mode:'lines', name:'sf = 1.5', line:{dash:'dot', color:'purple'} };
+  const ref20 = { x: d_values, y: d_values.map(()=>2.0), mode:'lines', name:'sf = 2.0', line:{dash:'dash', color:'green'} };
+
+  const layout1 = {
+    margin:{l:60, r:100, t:50, b:60},
+    title:{text:`Của vật liệu ${mat1}`, x:0.5},
+    xaxis:{title:'Đường kính (mm)'},
+    yaxis:{title:'Sf'},
+    legend:{x:1.05, y:0.5, orientation:'v'}
+  };
+
+  Plotly.newPlot('chart_mat1', [t11, t12, ref15, ref20], layout1, {responsive:true});
+
+  // trace cho vật liệu 2
+  const t21 = { x: d_values, y: sf21, mode: 'lines+markers', name: `sf21 (Ưs dập) `, line:{color:'orange'}, marker:{size:6} };
+  const t22 = { x: d_values, y: sf22, mode: 'lines+markers', name: `sf22 (Ưs cắt) `, line:{color:'blue'}, marker:{size:6} };
+
+  const layout2 = {
+    margin:{l:60, r:100, t:50, b:60},
+    title:{text:`Của vật liệu ${mat2}`, x:0.5},
+    xaxis:{title:'Đường kính (mm)'},
+    yaxis:{title:'Sf'},
+    legend:{x:1.05, y:0.5, orientation:'v'}
+  };
+
+  Plotly.newPlot('chart_mat2', [t21, t22, ref15, ref20], layout2, {responsive:true});
+</script>
+
+<!-- Đoạn văn tư vấn -->
+<div class="box">
+  <h3>Tư vấn điều chỉnh</h3>
+  <p><b>Vật liệu {{ result.mat1 }}:</b> {{ result.tu_van1 }}</p>
+  <p><b>Vật liệu {{ result.mat2 }}:</b> {{ result.tu_van2 }}</p>
+</div>
+
+<!-- Nút quay về cuối trang -->
+<div style="margin-top:30px; text-align:center;">
+  <a href="{{ url_for('index') }}" 
+     style="display:inline-block; padding:10px 20px; background:#1de9b6; color:#000; 
+            text-decoration:none; border-radius:6px; font-weight:bold;">
+    ⬅ Quay về trang nhập dữ liệu
+  </a>
+</div>
+
+</body>
+</html>

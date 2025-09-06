@@ -1,0 +1,22 @@
+[
+  {
+    "name": "C45",
+    "sigma": 360
+  },
+  {
+    "name": "40Cr",
+    "sigma": 540
+  },
+  {
+    "name": "C60",
+    "sigma": 600
+  },
+  {
+    "name": "20CrMo",
+    "sigma": 785
+  },
+  {
+    "name": "40CrMo4",
+    "sigma": 900
+  }
+]
