@@ -62,7 +62,7 @@ def tinh_toan_key(d, l, p, n, eta, z, mat1, mat2):
     #---Tính toán----
     # Moment xoắn (Nm)
     try:
-        T = 30000 * p * eta / (3.1416 *n*z)
+        T = 300000 * p * eta / (3.1416 *n*z)
     except ZeroDivisionError:
         return {"error": "Tốc độ quay lớn hơn 0"}
     
