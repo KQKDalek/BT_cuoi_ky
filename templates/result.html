@@ -5,6 +5,7 @@
   <meta charset="UTF-8">
   <title>Kết quả tính toán then</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -154,7 +155,7 @@
       </form>
     </div>
 
-
+    <!-- Bảng thông số đã nhập -->
     <div class="container">
       <h2>Thông số đã nhập</h2>
       <table border="1" cellpadding="8" cellspacing="0">
@@ -163,8 +164,8 @@
           <td>{{ result.d }}</td>
         </tr>
         <tr>
-          <th>Chiều dài trục l (mm)</th>
-          <td>{{ result.l }}</td>
+          <th>Chiều dài trục L (mm)</th>
+          <td>{{ result.L }}</td>
         </tr>
         <tr>
           <th>Công suất P (kW)</th>
@@ -179,7 +180,7 @@
           <td>{{ result.eta }}</td>
         </tr>
         <tr>
-          <th>Số then</th>
+          <th>Số then cùng làm việc</th>
           <td>{{ result.z }}</td>
         </tr>
         <tr>
@@ -191,53 +192,60 @@
           <td>{{ result.mat2 }}</td>
         </tr>
       </table>
-
+      <!-- Bảng kết quả tính toán then -->
       <h2>Kết quả tính toán then</h2>
 
-      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:20px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; gap:20px;">
 
-        <!-- Bảng bên trái -->
-        <table border="1" cellpadding="5" style="width:50%; border-collapse:collapse;">
+        <!-- Bảng thông số then bên trái -->
+        <table border="1" cellpadding="6" style="width:50%; border-collapse:collapse;">
           <tr>
-            <th colspan="5">Thông số then</th>
+            <th colspan="6">Thông số then (mm)</th>
           </tr>
           <tr>
             <th>d</th>
+            <th>l</th>
             <th>b</th>
             <th>h</th>
             <th>t1</th>
             <th>t2</th>
           </tr>
           <tr>
-            <td>{{ result.d }}</td>
-            <td>{{ result.b }}</td>
-            <td>{{ result.h }}</td>
-            <td>{{ result.t1 }}</td>
-            <td>{{ result.t2 }}</td>
+            <td>{{ result.d | round(1)}}</td>
+            <td>{{ result.l | round(1)}}</td>
+            <td>{{ result.b | round(1)}}</td>
+            <td>{{ result.h | round(1)}}</td>
+            <td>{{ result.t1 | round(1)}}</td>
+            <td>{{ result.t2 | round(1)}}</td>
+          </tr>
+          <tr>
+            <th colspan="6" style="font-style: italic;font-weight: normal; background: #fff; font-size: 12px;text-align:left;">
+              Thông số then được chọn theo đường kính trục lắp then <br>
+              Giá trị tuân thủ theo tiểu chuẩn TCVN 2261
+            </th>
           </tr>
         </table>
 
         <!-- Ảnh bên phải -->
         <div style="width:50%; text-align:center;">
-          <img src="{{ url_for('static', filename='images/anh_then.jpg') }}" alt="Ảnh then"
-            style="max-width:100%; border:1px solid #1de9b6; border-radius:8px;">
-          <p><i>Hình minh họa then</i></p>
-        </div>
+          <img src="{{ url_for('static', filename='images/anh_then.png') }}" alt="Ảnh then"
+            style="max-width:100%; border:0px solid #1de9b6; border-radius:8px;">
+          </div>
       </div>
-      <h2>Kết quả tính toán ứng suất trên then</h2>
+      <!-- <h2>Kết quả tính toán ứng suất trên then</h2> -->
       <!-- Bảng kết quả ứng suất -->
-      <table border="1" cellpadding="5" style="width:100%; border-collapse:collapse;">
+      <table border="1" cellpadding="5" style="width:100%; border-collapse:collapse;margin-top: 20px;">
         <tr>
           <th colspan="5">Kết quả tính toán ứng suất</th>
         </tr>
         <tr>
           <th>Vật liệu</th>
-          <th>Ứng suất dập then</th>
-          <th>Ứng suất cắt then</th>
+          <th>Ứng suất dập trên then (MPa)</th>
+          <th>Ứng suất cắt trên then (MPa)</th>
           <th>Hệ số an toàn dập</th>
           <th>Hệ số an toàn cắt</th>
         </tr>
-        <!--hàng 1-->
+        <!--hàng mat1-->
         <tr>
           <td>{{ result.mat1 }}</td>
           <td>{{ result.sigma_dap | round(2) }}</td>
@@ -245,7 +253,7 @@
           <td>{{ result.sf11 | round(2) }}</td>
           <td>{{ result.sf12 | round(2)}}</td>
         </tr>
-        <!--hàng 2-->
+        <!--hàng mat2-->
         <tr>
           <td>{{ result.mat2 }}</td>
           <td>{{ result.sigma_dap | round(2) }}</td>
@@ -254,6 +262,10 @@
           <td>{{ result.sf22 | round(2)}}</td>
         </tr>
       </table>
+      <div style="text-align:center; margin-top:20px;">
+        <img src="{{ url_for('static', filename='images/CT_tinh_then.svg') }}" 
+          style="max-width:640px; height:auto;">
+      </div>
 
     </div>
 
@@ -264,7 +276,13 @@
       <p>{{ result.danh_gia2 }}</p>
     </div>
 
-
+    <div class="container" style="
+          padding: 0px;           /* khoảng cách trong box */
+        ">
+      <h2 style="margin:0; color:#333; font-size:20px;margin-bottom: 20px;">
+        Tư vấn điều chỉnh thiết kế
+      </h2>
+    </div>
 
     <!--Vẽ biểu đồ-->
     <!-- Khối chứa 2 chart cạnh nhau -->
@@ -317,13 +335,22 @@
       </div>
     </div>
 
+    <!-- Hướng dẫn sử dụng đồ thị -->
+    <div class="box">
+      <h3>Hướng dẫn sử dụng đồ thị</h3>
+      <p style="line-height:1.6;">
+      Quan sát sự biến động của đồ thị sf11, tìm ra điểm 1.5 &lt; sf11 &lt; 2 và điểm đó cũng thỏa mãn sf12 &gt;1.5. <br>
+      Điểm hội tụ đủ các yêu cầu đó là điểm có đường kính thỏa mãn độ bền then. <br>
+      Tham khảo tư vấn phía dưới nếu muốn điều chỉnh sâu hơn thông số đầu vào.
+      </p>
+    </div>
 
     <!-- Đoạn văn tư vấn -->
     <div class="box">
       <h3>Tư vấn điều chỉnh</h3>
-      <p><b>Vật liệu {{ result.mat1 }}:</b> {{ result.tu_van1 }}</p>
-      <p><b>Vật liệu {{ result.mat2 }}:</b> {{ result.tu_van2 }}</p>
+      <p>{{ result.tu_van }}</p>
     </div>
+
 
     <!-- Nút quay về cuối trang -->
     <div style="margin-top:30px; text-align:center;">
@@ -333,7 +360,7 @@
       </a>
     </div>
   </div>
-  <!-- Plotly -->
+  <!-- Gọi Plotly -->
   <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
   <script>
     // chuyển dữ liệu từ Flask bằng tojson

@@ -1,6 +1,6 @@
-from flask import Flask, render_template, request, redirect, url_for, session  # thêm session
+from flask import Flask, render_template, request, redirect, url_for, session  # type: ignore # thêm session
 import json
-from tinh_toan import tinh_toan_key  # <-- import hàm từ file ngoài
+from tinh_toan import tinh_toan_key, tu_van_dieu_chinh  # <-- import hàm từ file ngoài
 
 app = Flask(__name__)
 app.secret_key = "super_secret_key"  # cần cho session, đặt chuỗi bất kỳ
@@ -35,7 +35,7 @@ def index():
 def calculate():
     if request.method == "POST":
         d = float(request.form["d"])
-        l = float(request.form["l"])
+        L = float(request.form["L"])
         p = float(request.form["p"])
         n = float(request.form["n"])
         eta = float(request.form["eta"])
@@ -46,7 +46,7 @@ def calculate():
         # lưu lại form_data vào session để quay về index có dữ liệu
         session["form_data"] = {
             "d": request.form["d"],
-            "l": request.form["l"],
+            "L": request.form["L"],
             "p": request.form["p"],
             "n": request.form["n"],
             "eta": request.form["eta"],
@@ -56,7 +56,11 @@ def calculate():
         }
 
         # gọi hàm tính toán thiết kế thông số then
-        result = tinh_toan_key(d, l, p, n, eta, z, mat1, mat2)
+        result = tinh_toan_key(d, L, p, n, eta, z, mat1, mat2)
+        # gọi hàm tư vấn
+        tu_van = tu_van_dieu_chinh(d, L, p, n, eta, z, mat1, mat2)
+        result["tu_van"] = tu_van
+
 
         # Dữ liệu vẽ biểu đồ
         start = int(round(d)) - 5
@@ -75,7 +79,7 @@ def calculate():
                 sf22_values.append(None)
                 continue
 
-            res = tinh_toan_key(d_test, l, p, n, eta, z, mat1, mat2)
+            res = tinh_toan_key(d_test, L, p, n, eta, z, mat1, mat2)
             # nếu có lỗi (ví dụ "Error" key) thì push None
             if all(k in res for k in ("sf11", "sf12", "sf21", "sf22")):
                 sf11_values.append(round(res["sf11"], 2) if res["sf11"] is not None else None)
@@ -101,4 +105,4 @@ def calculate():
     return redirect(url_for("index"))
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True) #để Fault khi show cho client. Khi test để True để server tự reload

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Tooltip Test</title>
+  <style>
+    .tooltip {
+      position: relative;
+      display: inline-block;
+      cursor: pointer;
+      color: #2196f3;   /* màu xanh chữ i */
+      font-weight: bold;
+      margin-left: 5px;
+    }
+
+    .tooltip .tooltiptext {
+      visibility: hidden;
+      width: 220px;                
+      background-color: #333;      
+      color: #fff;                 
+      text-align: left;
+      padding: 8px;
+      border-radius: 6px;
+
+      position: absolute;
+      z-index: 1;
+      bottom: 125%;                
+      left: 50%;
+      transform: translateX(-50%);
+
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .tooltip .tooltiptext::after {
+      content: "";
+      position: absolute;
+      top: 100%;   
+      left: 50%;
+      margin-left: -5px;
+      border-width: 5px;
+      border-style: solid;
+      border-color: #333 transparent transparent transparent;
+    }
+
+    .tooltip:hover .tooltiptext {
+      visibility: visible;
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+  <la.bel>
+<div class="form-group">
+  <label for="d">
+    Đường kính trục (mm)
+    <span class="tooltip">ⓘ
+      <span class="tooltiptext">
+        Nhập đường kính ngoài của trục, đơn vị mm.<br>
+        Giá trị nên nằm trong khoảng 10–200 mm.
+      </span>
+    </span>
+  </label>
+  <input type="number" id="d" name="d" step="any" min="6" max="500" required
+         value="{{ form_data.get('d','') }}">
+  <span class="error">Đường kính nằm trong khoảng 6 - 500mm</span>
+</div>
+

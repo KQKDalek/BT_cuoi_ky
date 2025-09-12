@@ -79,6 +79,67 @@
     .back-btn:hover {
       background: #13c3a1;
     }
+    .tooltip {
+      position: relative;
+      display: inline-block;
+      cursor: pointer;
+      color: #2196f3;   /* màu xanh chữ i */
+      font-weight: normal;
+      margin-left: 5px;
+    }
+    /* định dạng đoạn gợi ý */
+    .tooltip .tooltiptext {
+      visibility: hidden;
+      width: 240px;                /* độ rộng bảng gợi ý */
+      background-color: #333;      /* nền */
+      color: #fff;                 /* màu chữ */
+      text-align: left;
+      padding: 10px;
+      border-radius: 6px;
+
+      /* thêm format */
+      font-size: 12px;
+      font-family: "Segoe UI", Arial, sans-serif;
+      font-style: normal;          /* có thể để italic */
+      line-height: 1.4;
+
+      position: absolute;
+      z-index: 1;
+      bottom: 125%;
+      left: 50%;
+      transform: translateX(-50%);
+
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .tooltip .tooltiptext::after {
+      content: "";
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      margin-left: -5px;
+      border-width: 5px;
+      border-style: solid;
+      border-color: #333 transparent transparent transparent;
+    }
+
+    /* ép tooltip xuống dưới nếu có class tooltip-bottom */
+    .tooltip-bottom .tooltiptext {
+      top: 125%;
+      bottom: auto;
+    }
+    .tooltip-bottom .tooltiptext::after {
+      top: -5px;
+      bottom: auto;
+      border-color: transparent transparent #333 transparent;
+    }
+
+    /* hiệu ứng hover */
+    .tooltip:hover .tooltiptext {
+      visibility: visible;
+      opacity: 1;
+    }
   </style>
 </head>
 <body>
@@ -88,49 +149,102 @@
     <form action="{{ url_for('calculate') }}" method="post" class="form-grid">
       
       <div class="form-group">
-        <label for="d">Đường kính (mm)</label>
+        <label for="d">
+          Đường kính trục (mm)
+          <span class="tooltip">ⓘ
+            <span class="tooltiptext">
+              Nhập giá trị đường kính ngoài của đoạn trục lắp then.<br>
+              Giá trị nên nằm trong khoảng 6-500 mm.<br>
+              Thường lấy tròn đến hàng đơn vị.<br>
+              VD: 10, 12, 15, 20, 50,...
+            </span>
+          </span>
+        </label>
         <input type="number" id="d" name="d" step="any" min="6" max="500" required
-               value="{{ form_data.get('d','') }}">
+              value="{{ form_data.get('d','') }}">
         <span class="error">Đường kính nằm trong khoảng 6 - 500mm</span>
       </div>
       
       <div class="form-group">
-        <label for="p">Công suất (kW)</label>
+        <label for="p">Công suất truyền (kW)
+            <span class="tooltip">ⓘ
+            <span class="tooltiptext">
+              Nhập công suất cần truyền qua then<br>
+              VD: 1.5, 3, 5.5,... kW
+            </span>
+          </span>
+        </label>
         <input type="number" id="p" name="p" step="any" min="1e-9" required
                value="{{ form_data.get('p','') }}">
         <span class="error">Công suất là số dương</span>
       </div>
       
       <div class="form-group">
-        <label for="l">Chiều dài (mm)</label>
-        <input type="number" id="l" name="l" step="any" min="1e-9" required
-               value="{{ form_data.get('l','') }}">
+        <label for="L">Chiều dài trục (mm)
+            <span class="tooltip">ⓘ
+            <span class="tooltiptext">
+              Nhập giá trị chiều dài đoạn trục lắp then<br>
+              Chiều dài trục thường tròn hàng đơn vị<br>
+              VD: 25, 50, 100,...
+            </span>
+          </span>
+        </label>
+        <input type="number" id="L" name="L" step="any" min="1e-9" required
+               value="{{ form_data.get('L','') }}">
         <span class="error">Chiều dài là số dương</span>
       </div>
       
       <div class="form-group">
-        <label for="n">Tốc độ quay (rpm)</label>
+        <label for="n">Tốc độ quay (rpm)
+            <span class="tooltip">ⓘ
+            <span class="tooltiptext">
+              Nhập tốc độ quay của trục lắp then<br>
+              VD: 20, 30, 50, 100,...
+            </span>
+          </span>
+        </label>
         <input type="number" id="n" name="n" step="any" min="1e-9" required
                value="{{ form_data.get('n','') }}">
         <span class="error">Tốc độ quay là số dương</span>
       </div>
       
       <div class="form-group">
-        <label for="z">Số then</label>
-        <input type="number" id="z" name="z" min="1" max="4" required
+        <label for="z">Số then cùng làm việc (chiếc)
+            <span class="tooltip">ⓘ
+            <span class="tooltiptext">
+              Nhập số lượng then dự kiến sử dụng<br>
+              Số lượng sử dụng từ 1, 2, 3 hoặc 4 chiếc.
+            </span>
+          </span>
+        </label>
+        <input type="number" id="z" name="z" min="1" max="4" step="1" required
                value="{{ form_data.get('z','') }}">
         <span class="error">Số lượng then từ 1 đến 4 then</span>
       </div>
       
       <div class="form-group">
-        <label for="eta">Hiệu suất (%)</label>
+        <label for="eta">Hiệu suất (%)
+            <span class="tooltip">ⓘ
+            <span class="tooltiptext">
+              Hiệu suất truyền công suất của hệ thống<br>
+              Thông thường hệ thống đạt 92% - 97%
+            </span>
+          </span>
+        </label>
         <input type="number" id="eta" name="eta" step="any" min="1e-9" max="100" required
                value="{{ form_data.get('eta','') }}">
         <span class="error">Vui lòng nhập số hợp lệ</span>
       </div>
       
       <div class="form-group">
-        <label for="mat1">Loại vật liệu 1</label>
+        <label for="mat1">Vật liệu làm then loại 1
+            <span class="tooltip">ⓘ
+            <span class="tooltiptext">
+              Vật liệu dự kiến làm then.<br>
+              Thông thường hay sử dụng C45, 40Cr.
+            </span>
+          </span>
+        </label>
         <select id="mat1" name="mat1" required>
           <option value="">-- chọn vật liệu --</option>
           {% for m in materials %}
@@ -143,7 +257,14 @@
       </div>
       
       <div class="form-group">
-        <label for="mat2">Loại vật liệu 2</label>
+        <label for="mat2">Vật liệu làm then loại 2 
+            <span class="tooltip">ⓘ
+            <span class="tooltiptext">
+              Vật liệu để so sánh với với vật liệu loại 1.<br>
+              Phục vụ phép tính song song hai loại vật liệu cùng lúc.
+            </span>
+          </span>
+        </label>
         <select id="mat2" name="mat2" required>
           <option value="">-- chọn vật liệu --</option>
           {% for m in materials %}
@@ -155,8 +276,14 @@
         </select>
       </div>
       
-      <button type="submit">Tính toán</button>
+      <button type="submit"style="background: #00CCFF; font-size: 18px;">Thực hiện tính toán</button>
     </form>
+    <div class="image-wrapper">
+      <img src="{{ url_for('static', filename='images/truc_then.png') }}" alt="Hình minh họa then"
+        style="display:block; max-width:100%; height:auto; margin:10px auto; border:1px solid #ccc; border-radius:8px;">
+      <h3 style="text-align:center; margin-top:20px; font-size: 14px">Hình minh họa</h3>
+    </div>
+    </div>
   </div>
 
   <script>
